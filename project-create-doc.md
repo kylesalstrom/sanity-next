@@ -70,4 +70,54 @@ ___
 ## All Together
 ### Make a dynamic page template in next app
 
-- in web app run `npm install @sanity/client` to install necessary dependencies for connecting to the Sanity API
+in web app run :
+- `npm install @sanity/client` to install necessary dependencies for connecting to the Sanity API
+- `npm install groq` to install projections syntax highlighting
+- `npm install @sanity/image-url` to install the sanity image url-package to make fetching image and file assets easier. Usage:
+```
+import imageUrlBuilder from '@sanity/image-url'
+```
+```
+function urlFor (source) {
+  return imageUrlBuilder(client).image(source)
+}
+```
+```
+return (
+  <img
+    src={urlFor(props.authorImage)
+      .width(200)
+      .url()}
+  />
+)
+```
+- `npm install @portabletext/react` to install support for portable text content. Usage:
+```
+import {PortableText} from '@portabletext/react'
+```
+```
+const ptComponents = {
+  types: {
+    image: ({ value }) => {
+      if (!value?.asset?._ref) {
+        return null
+      }
+      return (
+        <img
+          alt={value.alt || ' '}
+          loading="lazy"
+          src={urlFor(value).width(320).height(240).fit('max').auto('format')}
+        />
+      )
+    }
+  }
+}
+```
+```
+return (
+  <PortableText
+    value={props.body}
+    components={ptComponents}
+  />
+)
+```
